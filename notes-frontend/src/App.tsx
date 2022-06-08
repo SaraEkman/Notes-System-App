@@ -1,26 +1,58 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from 'react'
+import { CreateNewNote } from './components/CreateNewNote'
+import { CreateUser } from './components/CreateUser'
+import { LogIn } from './components/LogIn'
 
 function App() {
+  const [userId, setUserId] = useState(0)
+  const [showLogIn, setShowLogIn] = useState(false)
+  const [showLogOut, setShowLogOut] = useState(false)
+
+  useEffect(() => {
+    let getLS = localStorage.getItem('userId')
+    if (getLS === null) {
+      setUserId(0)
+    } else {
+      setUserId(parseInt(getLS))
+    }
+  }, [])
+
+  const toggleLogInForm = () => {
+    setShowLogIn(!showLogIn)
+    setShowLogOut(false)
+  }
+  const toggleLogOutForm = () => {
+    setShowLogOut(!showLogOut)
+    setShowLogIn(false)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      {userId != 0 ? (
+        <div>
+          <CreateNewNote />
+        </div>
+      ) : (
+        <div>
+          <article>
+            <button onClick={toggleLogInForm}>Log in</button>
+            <button onClick={toggleLogOutForm}>Sign up</button>
+          </article>
+          {showLogIn && (
+            <div>
+              {' '}
+              <LogIn />
+            </div>
+          )}
+          {showLogOut && (
+            <div>
+              <CreateUser />
+            </div>
+          )}
+        </div>
+      )}
+    </>
+  )
 }
 
-export default App;
+export default App
