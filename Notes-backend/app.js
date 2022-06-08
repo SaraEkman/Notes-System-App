@@ -35,10 +35,22 @@ const init = async () => {
 };
 init();
 
-app.get('/user', async (req, res, next) => {
+app.get('/getNotesWithUsers', async (req, res, next) => {
     try {
-        let result = await app.locals.con.query('SELECT * FROM users');
-        res.json(result[0]);
+        const [users] = await app.locals.con.execute('SELECT * FROM users');
+        const [notes] = await app.locals.con.execute('SELECT * FROM notes');
+        console.log(users.length, notes.length);
+
+        const notesWithUsers = users.map((user) => {
+            const userNotes = notes.filter((note) => note.created_by === user.id);
+            return {
+                ...user,
+                notes: userNotes
+            };
+        });
+
+        res.send(notesWithUsers);
+
     } catch (err) {
         console.log(err);
     }
@@ -46,9 +58,21 @@ app.get('/user', async (req, res, next) => {
 
 app.post('/createUser', async (req, res, next) => {
     try {
-        const encryptedPass = cryptoJs.AES.encrypt(req.body.userPass, "passWord").toString();
-        const result = await app.locals.con.query(`INSERT INTO users (userEmail, userPass) VALUES ('${req.body.userEmail}', '${encryptedPass}')`);
-        res.json(result);
+        let checkUser = await app.locals.con.query('SELECT * FROM users WHERE userEmail = ?', [req.body.userEmail]);
+        if (checkUser[0].length > 0) {
+            res.json({
+                status: 'error',
+                message: 'User already exists'
+            });
+        } else {
+            const encryptedPass = cryptoJs.AES.encrypt(req.body.userPass, "passWord").toString();
+            await app.locals.con.query(`INSERT INTO users (userEmail, userPass) VALUES ('${req.body.userEmail}', '${encryptedPass}')`);
+
+            res.json({
+                status: 'success',
+                message: 'User created'
+            });
+        }
     } catch (err) {
         console.log(err);
     }
@@ -72,11 +96,44 @@ app.post('/logIn', async (req, res, next) => {
             }
             else {
                 res.json({
-                    error: 'Wrong password'
+                    error: 'User not found'
                 });
             }
         }
-       
+
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.get('/allNotes', async (req, res, next) => {
+    try {
+        let result = await app.locals.con.query('SELECT * FROM notes');
+        res.json(result[0]);
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+app.get('/getCreatedBy/:id', async (req, res, next) => {
+    try {
+        let result = await app.locals.con.query(`SELECT * FROM users WHERE id = ${req.params.id}`);
+        res.json(result[0][0].userEmail);
+    } catch (err) {
+        console.log(err);
+    }
+});
+
+
+app.get('/findNotes/:id', async (req, res, next) => {
+    try {
+        let result = await app.locals.con.query(`SELECT * FROM notes WHERE created_by = ${req.params.id}`);
+        if (result[0].length === 0) {
+            res.json('No notes found');
+        }
+        else {
+            res.json(result[0]);
+        }
     } catch (err) {
         console.log(err);
     }
@@ -85,29 +142,29 @@ app.post('/logIn', async (req, res, next) => {
 
 app.post('/createNote', async (req, res, next) => {
     try {
-        const result = await app.locals.con.execute((`INSERT INTO notes (title, content, created_at, created_by, updated_by, completed, deleted) VALUES (?, ?, ?, ?, ?, ?, ?)`), [req.body.title, req.body.content, req.body.created_at, req.body.created_by, req.body.updated_by, req.body.completed, req.body.deleted]);
+        const result = await app.locals.con.execute((`INSERT INTO notes (content, created_at, created_by, updated_by, deleted) VALUES (?, ?, ?, ?, ?)`), [req.body.content, req.body.created_at, req.body.created_by, req.body.updated_by, req.body.deleted]);
         res.json(result);
     } catch (err) {
         console.log(err);
     }
 });
 
-app.post('/updateNote', async (req, res, next) => {
+app.put('/updateNote', async (req, res, next) => {
     try {
-        const result = await app.locals.con.execute((`UPDATE notes SET title = ?, content = ?, created_at = ?, created_by = ?, updated_by = ?, completed = ?, deleted = ? WHERE id = ?`), [req.body.title, req.body.content,req.body.created_at, req.body.created_by, req.body.updated_by, req.body.completed, req.body.deleted, req.body.id]);
+        const result = await app.locals.con.execute((`UPDATE notes SET content = ?, created_at = ?, created_by = ?, updated_at = ?, updated_by = ?, deleted = ? WHERE id = ?`), [req.body.content, req.body.created_at, req.body.created_by, req.body.updated_at, req.body.updated_by, req.body.deleted, req.body.id]);
         res.json(result);
     } catch (err) {
         console.log(err);
     }
-})
+});
 
-app.post('/deleteNote', async (req, res, next) => {
+app.put('/deleteNote', async (req, res, next) => {
     try {
         const result = await app.locals.con.execute((`UPDATE notes SET deleted = ? WHERE id = ?`), [req.body.deleted, req.body.id]);
         res.json(result);
     } catch (err) {
         console.log(err);
     }
-    })
+});
 
 module.exports = app;
