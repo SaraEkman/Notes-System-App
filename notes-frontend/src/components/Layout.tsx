@@ -1,12 +1,10 @@
-import { Link, Outlet } from "react-router-dom"
-import App from "../App"
+import { Outlet } from 'react-router-dom'
 
 export const Layout = () => {
-    return (<div>
+  return (
+    <div>
       <header>
-        <h1>
-          <Link to="/">React Notes System</Link>
-        </h1>
+        <h1>React Notes System</h1>
       </header>
       <main>
         <Outlet />
@@ -14,5 +12,6 @@ export const Layout = () => {
       <footer>
         <h3>CopyRight</h3>
       </footer>
-    </div>)
+    </div>
+  )
 }

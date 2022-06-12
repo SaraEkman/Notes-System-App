@@ -5,9 +5,11 @@ import { CreateNote } from '../models/CreateNote'
 import { Notes } from '../services/Notes'
 import { EditNote } from './EditNote'
 import { IAllNotesWithUsers } from '../models/IAllNotesWithUsers'
-// import { IUser } from '../models/IUser'
+import { Div } from '../styles/Div'
+import { Button } from '../styles/Button'
 
 export const CreateNewNote = () => {
+  const parse = require('html-react-parser');
   const [notes, setNotes] = useState<INote[]>([])
   const [showMessage, setShowMessage] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
@@ -27,11 +29,12 @@ export const CreateNewNote = () => {
     deleted: 0,
   })
   const editorRef = useRef<any>()
+  const [createNewNoteItem, setCreateNewNoteItem] = useState('Create new note')
 
   useEffect(() => {
     let notes = new Notes()
     let userId: number = JSON.parse(localStorage.getItem('userId') || '0')
-    if (userId === 21) {
+    if (userId === 23) {
       notes.getNotesWithUsers().then((res) => {
         setAllNotesWithUsers(res)
         console.log(res)
@@ -78,6 +81,8 @@ export const CreateNewNote = () => {
   const toggleShowEditor = () => {
     setShowEditor(!showEditor)
     setShowEdit(false)
+    if (showEditor) setCreateNewNoteItem('Create new note')
+    else setCreateNewNoteItem('Close editor')
   }
 
   const toggleEdit = () => {
@@ -96,33 +101,41 @@ export const CreateNewNote = () => {
   }
 
   let printHtml = allNotesWithUsers.map((user) => (
-    <div key={user.id}>
-      <h1>UserEmail: {user.userEmail}</h1>
-      <h2>User Id: {user.id}</h2>
+    <Div key={user.id}>
+      <h2>
+        UserEmail: {user.userEmail}
+        <br />
+        User Id: {user.id}
+      </h2>
       {user.notes.map((note) => {
         return (
           <div key={note.id}>
-            <div dangerouslySetInnerHTML={{ __html: note.content }}></div>
-            <div>CreatedAt: {note.created_at}</div>
-            <div>CreatedBy: {note.created_by} </div>
-            <div>UpdatedAt: {note.updated_at} </div>
-            <div>UpdatedBy: {note.updated_by} </div>
-            <button onClick={() => handleEdit(note)}>Edit</button>
-            <button onClick={() => handleDelete(note)}>Delete</button>
+            <div>{parse( note.content )}</div>
+            <h3>CreatedAt: {note.created_at}</h3>
+            <h4>CreatedBy: {note.created_by} </h4>
+            <h5>UpdatedAt: {note.updated_at} </h5>
+            <h5>UpdatedBy: {note.updated_by} </h5>
+            <h5>Deleted: {note.deleted}</h5>
+            <Button onClick={() => handleEdit(note)}>Edit</Button>
+            <Button className="secondary" onClick={() => handleDelete(note)}>
+              Delete
+            </Button>
           </div>
         )
       })}
-    </div>
+    </Div>
   ))
 
   return (
     <>
-      <h2>Create new note</h2>
-      <button onClick={toggleShowEditor}>Create new note</button>
-      {showMessage && <p>No notes found</p>}
+      <div className="Style_div">
+        <h2>Create new note</h2>
+        <Button onClick={toggleShowEditor}>{createNewNoteItem}</Button>
+        {showMessage && <p className="para">No notes found</p>}
+      </div>
 
       {showEditor && (
-        <div>
+        <div className='Editor'>
           <Editor
             onInit={(evt, editor) => (editorRef.current = editor)}
             initialValue="<p>Skriv här :)</p>"
@@ -143,7 +156,9 @@ export const CreateNewNote = () => {
                 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             }}
           />
-          <button onClick={handleClick}>Spara</button>{' '}
+          <div className="Style_div">
+            <Button onClick={handleClick}>Spara</Button>{' '}
+          </div>
         </div>
       )}
 
@@ -156,35 +171,39 @@ export const CreateNewNote = () => {
             {note.deleted === 1 ? (
               <div></div>
             ) : (
-              <>
+              <Div>
                 {' '}
-                <div dangerouslySetInnerHTML={{ __html: note.content }}></div>
-                <div>
-                  CreatedAt: {note.created_at} createdBy:{createdBy}
-                </div>
-                <div>UpdatedAt: {note.updated_at} </div>
-                <button
+                <div>{parse( note.content )}</div>
+                <h3>createdBy:{createdBy}</h3>
+                <h4>CreatedAt: {note.created_at}</h4>
+                <h4>UpdatedAt: {note.updated_at} </h4>
+                <Button
                   onClick={() => {
                     handleEdit(note)
                   }}
                 >
                   Edit
-                </button>
-                <button
+                </Button>
+                <Button
+                  className="secondary"
                   onClick={() => {
                     handleDelete(note)
                   }}
                 >
                   Delete
-                </button>
-              </>
+                </Button>
+              </Div>
             )}
           </div>
         ))}
 
       {showAllNotes && [printHtml]}
 
-      <button onClick={handleClear}>Log out</button>
+      <div className="Style_div">
+        <Button className="secondary" onClick={handleClear}>
+          Log out
+        </Button>
+      </div>
     </>
   )
 }

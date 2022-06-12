@@ -1,6 +1,8 @@
 import { ChangeEvent, useState } from 'react'
 import { IUser } from '../models/IUser'
 import { Notes } from '../services/Notes'
+import { Button } from '../styles/Button'
+import { Div } from '../styles/Div'
 
 export function CreateUser() {
   const [user, setUser] = useState<IUser>({
@@ -31,26 +33,26 @@ export function CreateUser() {
     })
   }
   return (
-    <div>
+    <Div className='Form_div'>
       <h1>Sign in</h1>
-      {showError && <p>User already exists instead log in please</p>}
-      {showMess && <p>User created please log in</p>}
+      {showError && <p className='para'>User already exists instead log in please</p>}
+      {showMess && <p className='yes'>User created please log in</p>}
       <form onSubmit={handleClick}>
         <label>
-          Email:
-          <input type="text" name="userEmail" onChange={handleChange} />
+         Email or userName
         </label>
+          <input type="text" name="userEmail" onChange={handleChange} />
         <label>
-          Password:
+          Password
+          </label>
           <input
             type="text"
             name="userPass"
             onChange={handleChange}
             autoComplete="on"
           />
-        </label>
-        <input type="submit" value="Register" />
+        <Button type="submit">Register</Button>
       </form>
-    </div>
+    </Div>
   )
 }

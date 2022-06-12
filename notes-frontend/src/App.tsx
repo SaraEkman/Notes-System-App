@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react'
 import { CreateNewNote } from './components/CreateNewNote'
 import { CreateUser } from './components/CreateUser'
 import { LogIn } from './components/LogIn'
+import { Button } from './styles/Button'
+import './GlobalStyle.css'
 
 function App() {
   const [userId, setUserId] = useState(0)
   const [showLogIn, setShowLogIn] = useState(false)
   const [showLogOut, setShowLogOut] = useState(false)
+  const [itemLogIN, setItemLogIN] = useState('Log In')
+  const [itemSignIn, setItemSignIn] = useState('Sign In')
 
   useEffect(() => {
     let getLS = localStorage.getItem('userId')
@@ -20,23 +24,36 @@ function App() {
   const toggleLogInForm = () => {
     setShowLogIn(!showLogIn)
     setShowLogOut(false)
+    if (showLogIn) {
+      setItemLogIN('Log In');
+    }
+    else {
+    setItemLogIN('Close');
+    setItemSignIn('Sign In')
   }
-  const toggleLogOutForm = () => {
+  }
+  const toggleSignInForm = () => {
     setShowLogOut(!showLogOut)
     setShowLogIn(false)
+    if (showLogOut) {
+      setItemSignIn('Sign In')
+    } else {
+      setItemSignIn('Close');
+      setItemLogIN('Log In')
+    }
   }
 
   return (
-    <>
+    <div className="App">
       {userId != 0 ? (
         <div>
           <CreateNewNote />
         </div>
       ) : (
         <div>
-          <article>
-            <button onClick={toggleLogInForm}>Log in</button>
-            <button onClick={toggleLogOutForm}>Sign up</button>
+          <article className="App_btns">
+            <Button onClick={toggleLogInForm}>{itemLogIN}</Button>
+            <Button onClick={toggleSignInForm}>{itemSignIn}</Button>
           </article>
           {showLogIn && (
             <div>
@@ -51,7 +68,7 @@ function App() {
           )}
         </div>
       )}
-    </>
+    </div>
   )
 }
 

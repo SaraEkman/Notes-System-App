@@ -1,6 +1,8 @@
 import { ChangeEvent, useState } from 'react'
 import { IUser } from '../models/IUser'
 import { Notes } from '../services/Notes'
+import { Button } from '../styles/Button'
+import { Div } from '../styles/Div'
 
 export function LogIn() {
   const [user, setUser] = useState<IUser>({
@@ -32,25 +34,25 @@ export function LogIn() {
       .catch((erro) => console.log('Error', erro))
   }
   return (
-    <div>
+    <Div className='Form_div'>
       <h1>Log in</h1>
-      {showError && <p>Wrong email or password</p>}
+      {showError && <p className='para'>Wrong email or password</p>}
       <form onSubmit={handleClick}>
         <label>
-          Email:
-          <input type="text" name="userEmail" onChange={handleChange} />
+          Email or userName
         </label>
+          <input type="text" name="userEmail" onChange={handleChange} />
         <label>
-          Password:
+          Password
+          </label>
           <input
             type="text"
             name="userPass"
             onChange={handleChange}
             autoComplete="on"
           />
-        </label>
-        <input type="submit" value="log in" />
+        <Button type="submit">Log in</Button>
       </form>
-    </div>
+    </Div>
   )
 }

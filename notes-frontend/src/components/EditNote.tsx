@@ -2,6 +2,7 @@ import { Editor } from '@tinymce/tinymce-react'
 import { useRef } from 'react'
 import { INote } from '../models/INote'
 import { Notes } from '../services/Notes'
+import { Button } from '../styles/Button'
 
 interface IPropsEditNote {
   note: INote
@@ -32,6 +33,7 @@ export const EditNote = (props: IPropsEditNote) => {
 
   return (
     <div>
+      <div className='Editor'>
       <h1>Edit Note</h1>
       <Editor
         onInit={(evt, editor) => (editorRef.current = editor)}
@@ -52,8 +54,11 @@ export const EditNote = (props: IPropsEditNote) => {
           content_style:
             'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
         }}
-      />
-      <button onClick={handleClick}>Spara</button>
+        />
+        </div>
+      <div className="Style_div">
+        <Button onClick={handleClick}>Spara</Button>
+        </div>
     </div>
   )
 }

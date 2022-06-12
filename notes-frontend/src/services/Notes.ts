@@ -68,7 +68,7 @@ export class Notes {
   async deleteNote(note: INote) {
     let response = await axios.put(
       `http://localhost:3000/deleteNote`,
-      { deleted: true, id: note.id },
+      { deleted: !note.deleted, id: note.id },
       {
         headers: {
           'content-type': 'application/json',
