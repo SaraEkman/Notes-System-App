@@ -137,11 +137,12 @@ export const CreateNewNote = () => {
       {showEditor && (
         <div className='Editor'>
           <Editor
+            apiKey='ogml1d4jmglhcg0xvubusos00c2ilxxj5fwkqt6w4ywvdeas'
             onInit={(evt, editor) => (editorRef.current = editor)}
             initialValue="<p>Skriv här :)</p>"
             init={{
               height: 500,
-              menubar: false,
+              menubar: true,
               plugins: [
                 'advlist autolink lists link image charmap print preview anchor',
                 'searchreplace visualblocks code fullscreen',

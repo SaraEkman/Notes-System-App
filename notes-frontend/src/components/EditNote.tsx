@@ -33,32 +33,33 @@ export const EditNote = (props: IPropsEditNote) => {
 
   return (
     <div>
-      <div className='Editor'>
-      <h1>Edit Note</h1>
-      <Editor
-        onInit={(evt, editor) => (editorRef.current = editor)}
-        initialValue={props.note.content}
-        init={{
-          height: 500,
-          menubar: false,
-          plugins: [
-            'advlist autolink lists link image charmap print preview anchor',
-            'searchreplace visualblocks code fullscreen',
-            'insertdatetime media table paste code help wordcount',
-          ],
-          toolbar:
-            'undo redo | formatselect | ' +
-            'bold italic backcolor | alignleft aligncenter ' +
-            'alignright alignjustify | bullist numlist outdent indent | ' +
-            'removeformat | help',
-          content_style:
-            'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-        }}
+      <div className="Editor">
+        <h1>Edit Note</h1>
+        <Editor
+          apiKey="ogml1d4jmglhcg0xvubusos00c2ilxxj5fwkqt6w4ywvdeas"
+          onInit={(evt, editor) => (editorRef.current = editor)}
+          initialValue={props.note.content}
+          init={{
+            height: 500,
+            menubar: true,
+            plugins: [
+              'advlist autolink lists link image charmap print preview anchor',
+              'searchreplace visualblocks code fullscreen',
+              'insertdatetime media table paste code help wordcount',
+            ],
+            toolbar:
+              'undo redo | formatselect | ' +
+              'bold italic backcolor | alignleft aligncenter ' +
+              'alignright alignjustify | bullist numlist outdent indent | ' +
+              'removeformat | help',
+            content_style:
+              'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+          }}
         />
-        </div>
+      </div>
       <div className="Style_div">
         <Button onClick={handleClick}>Spara</Button>
-        </div>
+      </div>
     </div>
   )
 }
