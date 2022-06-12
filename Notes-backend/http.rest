@@ -15,8 +15,8 @@ POST http://localhost:3000/createUser
 Content-Type: application/json
 
 {
-    "userEmail": "h",
-    "userPass": "h"
+    "userEmail": "admin",
+    "userPass": "admin"
 }
 
 ###
@@ -24,8 +24,8 @@ POST http://localhost:3000/logIn
 Content-Type: application/json
 
 {
-    "userEmail": "q",
-    "userPass": "q"
+    "userEmail": "admin",
+    "userPass": "admin"
 }
 
 ###
